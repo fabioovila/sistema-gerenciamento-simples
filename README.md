@@ -1,34 +1,52 @@
-# Projeto de Fábio Augusto V. de S. Vila
-# Professor: Jefferson Gomes Dutra
+# 📦 Sistema de Gestão de Estoque e Vendas (CRUD)
+**Projeto Final de Disciplina** **Autor:** Fábio Augusto V. de S. Vila  
+**Professor:** Jefferson Gomes Dutra  
 
-# Visão Geral
+---
 
-Este projeto é uma aplicação de gestão (CRUD) desenvolvida em C++, utilizando os principais conceitos da Programação Orientada a Objetos (Abstração, Encapsulamento, Herança e Polimorfismo). O contexto da aplicação envolve o cadastro, consulta, alteração e remoção de dados de um sistema de gestão de estoque e vendas.
+## 📝 Visão Geral
+Esta aplicação é um sistema de gestão robusto desenvolvido em **C++**, focado na aplicação prática dos pilares da **Programação Orientada a Objetos (POO)**: Abstração, Encapsulamento, Herança e Polimorfismo. O sistema permite o gerenciamento completo (CRUD) de estoque e vendas.
 
-# Requisitos Mínimos
-*Mínimo 11 Classes* -> O projeto possui 20 Classes/Interfaces Próprias. Isso inclui 8 Entidades, 8 Repositórios Concretos, 2 Classes Abstratas e 2 Interfaces de Programação.
+---
 
-*Encapsulamento de Entidades* -> Todos os atributos são private ou protected. O acesso é feito via métodos getters e setters. A classe Pessoa utiliza atributos protected para otimizar o acesso pelas classes herdeiras.
 
-*Polimorfismo e Herança* -> Toda a lógica de herança e implementação (como a herança de Base e Pessoa, e a implementação da CrudInterface) utiliza apenas classes próprias, sem dependência de bibliotecas externas
+## 🚀 Como Rodar a Aplicação
 
-*CRUD em 8 Entidades* -> O CRUD está implementado para as 8 entidades de negócio: Categoria, Cliente, Fornecedor, Funcionario, Localizacao, Peca, pedidoCompra e Venda.
+Para compilar e executar o projeto no GitHub Codespaces ou em um terminal Linux, utilize os comandos abaixo:
 
-*Tratamento de Exceções* -> ex: CampoVazioException, ValorInvalidoException
+1. **Compilar o projeto:**
+   ```bash
+   make
 
-*Validação de Dados* -> As exceções são lançadas dentro dos métodos de validação dos Repositórios para garantir a integridade dos dados (ex: preço positivo, campos não vazios).
+---
 
-*Salvar e Carregar Info de Usuário* -> O FuncionarioRepositorio é responsável por salvar em arquivo (usuarios.txt) o Nome de Exibição e o tema (claro/escuro) do usuário. Estas informações são carregadas e exibidas ao inicializar a aplicação.
+## ✅ Requisitos e Implementação
 
-*Diagrama de Classes - UML* -> O diagrama foi gerado com a ferramenta Mermaid/PlantUML
-Link para o Diagrama Mermaid: https://www.mermaidchart.com/app/projects/69ceeb0f-547c-483b-bf58-ea52512b0b25/diagrams/f3b10483-6f2a-4620-8c1d-efd6449cdf47/version/v0.1/edit
+### 🏗️ Arquitetura de Classes
+O projeto supera o requisito mínimo de 11 classes, contando com **20 Classes/Interfaces Próprias**:
+* **8 Entidades:** Categoria, Cliente, Fornecedor, Funcionario, Localizacao, Peca, pedidoCompra e Venda.
+* **8 Repositórios Concretos:** Responsáveis pela persistência e lógica de cada entidade.
+* **2 Classes Abstratas** e **2 Interfaces de Programação**.
 
-*Interação com o Usuário* -> O sistema funciona via menu interativo (main / iniciarMenu), permitindo que o usuário interaja diretamente com as operações de CRUD.
+### 🛡️ Encapsulamento e Herança
+* **Privacidade:** Todos os atributos são `private` ou `protected`, com acesso restrito via *getters* e *setters*.
+* **Otimização:** A classe `Pessoa` utiliza atributos `protected` para facilitar a herança, garantindo que classes filhas acessem dados essenciais de forma eficiente.
+* **Independência:** Toda a lógica de herança e implementação da `CrudInterface` utiliza apenas código proprietário, sem dependências externas.
 
-# Instruções para Rodar a Aplicação
+### 🧪 Tratamento de Exceções e Validação
+O sistema garante a integridade dos dados através de um robusto sistema de exceções:
+* **Exceções Customizadas:** Como `CampoVazioException` e `ValorInvalidoException`.
+* **Validação Ativa:** Os Repositórios validam regras de negócio (ex: preços obrigatoriamente positivos) antes de persistir os dados.
 
-Executar os seguintes comandos no codespace do github:
+### 💾 Persistência e Personalização
+* O `FuncionarioRepositorio` gerencia o arquivo `usuarios.txt`.
+* Salva e carrega automaticamente o **Nome de Exibição** e a preferência de **Tema (Claro/Escuro)** do usuário ao iniciar a aplicação.
 
-1º -> "make"
-2º -> "make run"
+---
 
+## 📊 Modelagem (UML)
+O design do sistema foi planejado utilizando diagramas de classe para visualizar as relações de herança e polimorfismo.
+
+🔗 **[Visualizar Diagrama de Classes (Mermaid)](https://www.mermaidchart.com/app/projects/69ceeb0f-547c-483b-bf58-ea52512b0b25/diagrams/f3b10483-6f2a-4620-8c1d-efd6449cdf47/version/v0.1/edit)**
+
+---
