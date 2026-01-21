@@ -17,6 +17,7 @@ Para compilar e executar o projeto no GitHub Codespaces ou em um terminal Linux,
 1. **Compilar o projeto:**
    ```bash
    make
+   make run
 
 ---
 
