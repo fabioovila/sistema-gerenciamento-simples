@@ -25,23 +25,63 @@ pedidoCompra* PedidoCompraRepositorio::coletarDadosCriacao() {
     return novo;
 }
 
-void PedidoCompraRepositorio::coletarDadosAtualizacao(pedidoCompra* existente) {
-    float novoValor = -1.0f;
-    cout << "Novo Valor Total (Atual: R$" << existente->getValor() << ", deixe 0 ou vazio para não alterar): ";
+void PedidoCompraRepositorio::coletarDadosAtualizacao(pedidoCompra* existente) 
+{
+    limparTerminal();
     
-    string valorInput;
+    cout << "ALTERAR ESTADO DO PEDIDO (ID: " << existente->getId() << ")" << endl;
+    cout << "Estado Atual: " << existente->getEstado() << endl << endl << endl;
+    cout << "1 - Registrar Pagamento (-> PAGO)" << endl;
+    cout << "2 - Despachar Pedido (-> ENVIADO)" << endl;
+    cout << "3 - Confirmar Entrega (-> ENTREGUE)" << endl;
+    cout << "4 - Cancelar Pedido (-> CANCELADO)" << endl;
+    cout << "0 - Voltar sem alterar" << endl;
+    cout << "Escolha uma opcao: ";
+
+    int opEstado;
+    if (!(cin >> opEstado))
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return;
+    }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, valorInput);
-    if (!valorInput.empty() && valorInput != "0") {
-        try {
-            novoValor = stof(valorInput);
-            if (novoValor <= 0) throw ValorInvalidoException("Valor Total");
-        } catch (...) {
-            throw std::invalid_argument("Valor invalido.");
+
+    try
+    {
+        switch(opEstado)
+        {
+            case 1:
+                existente->pagarPedido();
+                cout << "\nPedido pago com sucesso!" << endl;
+                break;
+            case 2:
+                existente->enviarPedido();
+                cout << "\nPedido enviado para a transportadora." << endl;
+                break;
+            case 3:
+                existente->entregarPedido();
+                cout << "\nPedido entregue ao destino final." << endl;
+                break;
+            case 4:
+                existente->cancelarPedido();
+                cout << "\nPedido cancelado." << endl;
+                break;
+            case 0:
+                break;
+            default:
+                cout << "Opcao invalida" << endl;
+                break;
         }
     }
-    
-    if (novoValor > 0) existente->setValor(novoValor);
+    catch(const TransicaoEstadoInvalidaException& e)
+    {
+        cout << "\n[ERRO DE VALIDACAO] " << e.what() << endl;
+        cout << "A transicao foi bloqueada pelo sistema." << endl;
+    }
+
+    cout << "\nPressione Enter para continuar...";
+    cin.get();
 }
 
 PedidoCompraRepositorio repoPedidosCompra;

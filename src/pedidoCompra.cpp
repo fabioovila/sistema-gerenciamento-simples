@@ -63,7 +63,12 @@ void pedidoCompra::entregarPedido()
 }
 void pedidoCompra::cancelarPedido()
 {
-    if (this->estado != "ENTREGUE") 
+    if (this->estado == "ENVIADO") 
+    {
+        throw TransicaoEstadoInvalidaException("Nao e possivel CANCELAR um pedido que ja foi ENVIADO");
+    }
+
+    if (this->estado == "ENTREGUE") 
     {
         throw TransicaoEstadoInvalidaException("Nao e possivel CANCELAR um pedido que ja foi ENTREGUE");
     }

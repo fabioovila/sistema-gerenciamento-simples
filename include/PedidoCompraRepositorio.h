@@ -10,3 +10,6 @@ protected:
 public:
     PedidoCompraRepositorio() : RepositorioMemoriaBase<pedidoCompra>("Pedido de Compra") {}
 };
+
+extern PedidoCompraRepositorio repoPedidosCompra;
+void PedidosCompra();
