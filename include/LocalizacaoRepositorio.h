@@ -7,6 +7,13 @@ protected:
     void validarEntidade(const Localizacao& entidade) const override;
     Localizacao* coletarDadosCriacao() override;
     void coletarDadosAtualizacao(Localizacao* entidade) override;
+
+private:
+    string nomeArquivo = "dados/localizacoes.txt";
+    void carregarDados();
+    void salvarDados() const;
+
 public:
-    LocalizacaoRepositorio() : RepositorioMemoriaBase<Localizacao>("Localizacao") {}
+    LocalizacaoRepositorio();
+    ~LocalizacaoRepositorio();
 };

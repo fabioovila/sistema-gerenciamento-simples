@@ -7,6 +7,13 @@ protected:
     void validarEntidade(const Cliente& entidade) const override;
     Cliente* coletarDadosCriacao() override;
     void coletarDadosAtualizacao(Cliente* entidade) override;
+
+private:
+    string nomeArquivo = "dados/clientes.txt";
+    void carregarDados();
+    void salvarDados() const;
+
 public:
-    ClienteRepositorio() : RepositorioMemoriaBase<Cliente>("Cliente") {}
+    ClienteRepositorio();
+    ~ClienteRepositorio();
 };

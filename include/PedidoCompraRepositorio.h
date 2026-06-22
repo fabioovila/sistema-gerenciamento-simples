@@ -7,6 +7,16 @@ protected:
     void validarEntidade(const pedidoCompra& entidade) const override;
     pedidoCompra* coletarDadosCriacao() override;
     void coletarDadosAtualizacao(pedidoCompra* entidade) override;
+
+private:
+    string nomeArquivo = "dados/pedidos.txt";
+    void carregarDados();
+    void salvarDados() const;
+
 public:
-    PedidoCompraRepositorio() : RepositorioMemoriaBase<pedidoCompra>("Pedido de Compra") {}
+    PedidoCompraRepositorio();
+    ~PedidoCompraRepositorio();
 };
+
+extern PedidoCompraRepositorio repoPedidosCompra;
+void PedidosCompra();

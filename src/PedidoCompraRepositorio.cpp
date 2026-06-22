@@ -1,6 +1,71 @@
 #include "PedidoCompraRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+PedidoCompraRepositorio::PedidoCompraRepositorio() : RepositorioMemoriaBase<pedidoCompra>("Pedido de Compra") {
+    carregarDados();
+}
+
+PedidoCompraRepositorio::~PedidoCompraRepositorio() {
+    salvarDados();
+}
+
+void PedidoCompraRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        vector<string> campos;
+        string campo;
+        stringstream ss(linha);
+        while (getline(ss, campo, ';')) campos.push_back(campo);
+
+        if (campos.size() < 3) continue;
+
+        int idFornecedor = stoi(campos[0]);
+        float valor = stof(campos[1]);
+        string estado = campos[2];
+        string itensStr;
+
+        if (campos.size() >= 4) itensStr = campos[3];
+
+        vector<pair<int, int>> itens;
+        if (!itensStr.empty()) {
+            stringstream itensStream(itensStr);
+            string itemToken;
+            while (getline(itensStream, itemToken, '|')) {
+                if (itemToken.empty()) continue;
+                size_t sep = itemToken.find(',');
+                if (sep == string::npos) continue;
+                int idPeca = stoi(itemToken.substr(0, sep));
+                int quantidade = stoi(itemToken.substr(sep + 1));
+                itens.emplace_back(idPeca, quantidade);
+            }
+        }
+
+        pedidoCompra* pedido = new pedidoCompra(idFornecedor, valor, estado, itens);
+        lista.push_back(pedido);
+    }
+}
+
+void PedidoCompraRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const pedidoCompra* pedido : lista) {
+        const auto& itens = pedido->getItens();
+        saida << pedido->getIdFornecedor() << ";" << pedido->getValor() << ";" << pedido->getEstado() << ";";
+        for (size_t i = 0; i < itens.size(); ++i) {
+            saida << itens[i].first << "," << itens[i].second;
+            if (i + 1 < itens.size()) saida << "|";
+        }
+        saida << "\n";
+    }
+}
 
 void PedidoCompraRepositorio::validarEntidade(const pedidoCompra& ped) const {
     if (ped.getValor() <= 0) 
@@ -25,23 +90,63 @@ pedidoCompra* PedidoCompraRepositorio::coletarDadosCriacao() {
     return novo;
 }
 
-void PedidoCompraRepositorio::coletarDadosAtualizacao(pedidoCompra* existente) {
-    float novoValor = -1.0f;
-    cout << "Novo Valor Total (Atual: R$" << existente->getValor() << ", deixe 0 ou vazio para não alterar): ";
+void PedidoCompraRepositorio::coletarDadosAtualizacao(pedidoCompra* existente) 
+{
+    limparTerminal();
     
-    string valorInput;
+    cout << "ALTERAR ESTADO DO PEDIDO (ID: " << existente->getId() << ")" << endl;
+    cout << "Estado Atual: " << existente->getEstado() << endl << endl << endl;
+    cout << "1 - Registrar Pagamento (-> PAGO)" << endl;
+    cout << "2 - Despachar Pedido (-> ENVIADO)" << endl;
+    cout << "3 - Confirmar Entrega (-> ENTREGUE)" << endl;
+    cout << "4 - Cancelar Pedido (-> CANCELADO)" << endl;
+    cout << "0 - Voltar sem alterar" << endl;
+    cout << "Escolha uma opcao: ";
+
+    int opEstado;
+    if (!(cin >> opEstado))
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return;
+    }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, valorInput);
-    if (!valorInput.empty() && valorInput != "0") {
-        try {
-            novoValor = stof(valorInput);
-            if (novoValor <= 0) throw ValorInvalidoException("Valor Total");
-        } catch (...) {
-            throw std::invalid_argument("Valor invalido.");
+
+    try
+    {
+        switch(opEstado)
+        {
+            case 1:
+                existente->pagarPedido();
+                cout << "\nPedido pago com sucesso!" << endl;
+                break;
+            case 2:
+                existente->enviarPedido();
+                cout << "\nPedido enviado para a transportadora." << endl;
+                break;
+            case 3:
+                existente->entregarPedido();
+                cout << "\nPedido entregue ao destino final." << endl;
+                break;
+            case 4:
+                existente->cancelarPedido();
+                cout << "\nPedido cancelado." << endl;
+                break;
+            case 0:
+                break;
+            default:
+                cout << "Opcao invalida" << endl;
+                break;
         }
     }
-    
-    if (novoValor > 0) existente->setValor(novoValor);
+    catch(const TransicaoEstadoInvalidaException& e)
+    {
+        cout << "\n[ERRO DE VALIDACAO] " << e.what() << endl;
+        cout << "A transicao foi bloqueada pelo sistema." << endl;
+    }
+
+    cout << "\nPressione Enter para continuar...";
+    cin.get();
 }
 
 PedidoCompraRepositorio repoPedidosCompra;

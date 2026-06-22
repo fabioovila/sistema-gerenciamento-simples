@@ -1,6 +1,46 @@
 #include "PecaRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+PecaRepositorio::PecaRepositorio() : RepositorioMemoriaBase<Peca>("Peca") {
+    carregarDados();
+}
+
+PecaRepositorio::~PecaRepositorio() {
+    salvarDados();
+}
+
+void PecaRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        stringstream ss(linha);
+        string nome, categoria;
+        string precoStr;
+
+        if (!getline(ss, nome, ';')) continue;
+        if (!getline(ss, categoria, ';')) continue;
+        if (!getline(ss, precoStr, ';')) continue;
+
+        float preco = stof(precoStr);
+        Peca* peca = new Peca(nome, preco, categoria);
+        lista.push_back(peca);
+    }
+}
+
+void PecaRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const Peca* p : lista) {
+        saida << p->getNome() << ";" << p->getCategoria() << ";" << p->getPreco() << "\n";
+    }
+}
 
 void PecaRepositorio::validarEntidade(const Peca& p) const {
     if (p.getNome().empty() || p.getCategoria().empty()) 

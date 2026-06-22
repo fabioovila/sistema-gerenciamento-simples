@@ -1,6 +1,44 @@
 #include "ClienteRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+ClienteRepositorio::ClienteRepositorio() : RepositorioMemoriaBase<Cliente>("Cliente") {
+    carregarDados();
+}
+
+ClienteRepositorio::~ClienteRepositorio() {
+    salvarDados();
+}
+
+void ClienteRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        stringstream ss(linha);
+        string nome, telefone, preferencia;
+
+        if (!getline(ss, nome, ';')) continue;
+        if (!getline(ss, telefone, ';')) continue;
+        if (!getline(ss, preferencia, ';')) continue;
+
+        Cliente* cliente = new Cliente(nome, telefone, preferencia);
+        lista.push_back(cliente);
+    }
+}
+
+void ClienteRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const Cliente* cliente : lista) {
+        saida << cliente->getNome() << ";" << cliente->getTelefone() << ";" << cliente->getPreferencia() << "\n";
+    }
+}
 
 void ClienteRepositorio::validarEntidade(const Cliente& cli) const {
     if (cli.getNome().empty() || cli.getTelefone().empty() || cli.getPreferencia().empty()) 

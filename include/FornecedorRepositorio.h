@@ -7,6 +7,13 @@ protected:
     void validarEntidade(const Fornecedor& entidade) const override;
     Fornecedor* coletarDadosCriacao() override;
     void coletarDadosAtualizacao(Fornecedor* entidade) override;
+
+private:
+    string nomeArquivo = "dados/fornecedores.txt";
+    void carregarDados();
+    void salvarDados() const;
+
 public:
-    FornecedorRepositorio() : RepositorioMemoriaBase<Fornecedor>("Fornecedor") {}
+    FornecedorRepositorio();
+    ~FornecedorRepositorio();
 };

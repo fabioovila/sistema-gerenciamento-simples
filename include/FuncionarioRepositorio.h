@@ -11,7 +11,7 @@ using namespace std;
 class FuncionarioRepositorio {
 private:
     vector<Funcionario*> listaFuncionarios;
-    string nomeArquivo = "usuarios.txt";
+    string nomeArquivo = "dados/usuarios.txt";
     bool dadosAlterados = false;
 
     void carregarDados();
