@@ -19,27 +19,32 @@ void PedidoCompraRepositorio::carregarDados() {
     while (getline(entrada, linha)) {
         if (linha.empty()) continue;
 
+        vector<string> campos;
+        string campo;
         stringstream ss(linha);
-        string idFornecedorStr, valorStr, estado, itensStr;
+        while (getline(ss, campo, ';')) campos.push_back(campo);
 
-        if (!getline(ss, idFornecedorStr, ';')) continue;
-        if (!getline(ss, valorStr, ';')) continue;
-        if (!getline(ss, estado, ';')) continue;
-        if (!getline(ss, itensStr, ';')) continue;
+        if (campos.size() < 3) continue;
 
-        int idFornecedor = stoi(idFornecedorStr);
-        float valor = stof(valorStr);
+        int idFornecedor = stoi(campos[0]);
+        float valor = stof(campos[1]);
+        string estado = campos[2];
+        string itensStr;
+
+        if (campos.size() >= 4) itensStr = campos[3];
 
         vector<pair<int, int>> itens;
-        stringstream itensStream(itensStr);
-        string itemToken;
-        while (getline(itensStream, itemToken, '|')) {
-            if (itemToken.empty()) continue;
-            size_t sep = itemToken.find(',');
-            if (sep == string::npos) continue;
-            int idPeca = stoi(itemToken.substr(0, sep));
-            int quantidade = stoi(itemToken.substr(sep + 1));
-            itens.emplace_back(idPeca, quantidade);
+        if (!itensStr.empty()) {
+            stringstream itensStream(itensStr);
+            string itemToken;
+            while (getline(itensStream, itemToken, '|')) {
+                if (itemToken.empty()) continue;
+                size_t sep = itemToken.find(',');
+                if (sep == string::npos) continue;
+                int idPeca = stoi(itemToken.substr(0, sep));
+                int quantidade = stoi(itemToken.substr(sep + 1));
+                itens.emplace_back(idPeca, quantidade);
+            }
         }
 
         pedidoCompra* pedido = new pedidoCompra(idFornecedor, valor, estado, itens);
@@ -52,8 +57,8 @@ void PedidoCompraRepositorio::salvarDados() const {
     if (!saida.is_open()) return;
 
     for (const pedidoCompra* pedido : lista) {
-        saida << pedido->getIdFornecedor() << ";" << pedido->getValor() << ";" << pedido->getEstado() << ";";
         const auto& itens = pedido->getItens();
+        saida << pedido->getIdFornecedor() << ";" << pedido->getValor() << ";" << pedido->getEstado() << ";";
         for (size_t i = 0; i < itens.size(); ++i) {
             saida << itens[i].first << "," << itens[i].second;
             if (i + 1 < itens.size()) saida << "|";
