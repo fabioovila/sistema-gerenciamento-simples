@@ -9,7 +9,7 @@ protected:
     void coletarDadosAtualizacao(Categoria* entidade) override;
 
 private:
-    string nomeArquivo = "categorias.txt";
+    string nomeArquivo = "dados/categorias.txt";
     void carregarDados();
     void salvarDados() const;
 

@@ -9,7 +9,7 @@ protected:
     void coletarDadosAtualizacao(pedidoCompra* entidade) override;
 
 private:
-    string nomeArquivo = "pedidos.txt";
+    string nomeArquivo = "dados/pedidos.txt";
     void carregarDados();
     void salvarDados() const;
 
