@@ -30,6 +30,9 @@ public:
 
     void setValor(const float novoValor);
     
+    // Construtor para restaurar do arquivo
+    pedidoCompra(int idFornecedor, float valor, const string& estado, const vector<pair<int, int>>& itens);
+
     // Metodos da maquina de estados
     void pagarPedido();
     void enviarPedido();

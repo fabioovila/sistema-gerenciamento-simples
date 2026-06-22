@@ -33,6 +33,11 @@ void pedidoCompra::setValor(const float novoValor)
     valor = novoValor;
 }
 
+pedidoCompra::pedidoCompra(int idFornecedor, float valor, const string& estado, const vector<pair<int, int>>& itens)
+    : Base(), idFornecedor(idFornecedor), valor(valor), estado(estado), itens(itens)
+{
+}
+
 // Maquina de Estados
 
 void pedidoCompra::pagarPedido() 

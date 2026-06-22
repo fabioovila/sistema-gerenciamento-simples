@@ -1,6 +1,44 @@
 #include "FornecedorRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+FornecedorRepositorio::FornecedorRepositorio() : RepositorioMemoriaBase<Fornecedor>("Fornecedor") {
+    carregarDados();
+}
+
+FornecedorRepositorio::~FornecedorRepositorio() {
+    salvarDados();
+}
+
+void FornecedorRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        stringstream ss(linha);
+        string nome, telefone, tipo;
+
+        if (!getline(ss, nome, ';')) continue;
+        if (!getline(ss, telefone, ';')) continue;
+        if (!getline(ss, tipo, ';')) continue;
+
+        Fornecedor* fornecedor = new Fornecedor(nome, telefone, tipo);
+        lista.push_back(fornecedor);
+    }
+}
+
+void FornecedorRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const Fornecedor* fornecedor : lista) {
+        saida << fornecedor->getNome() << ";" << fornecedor->getTelefone() << ";" << fornecedor->getTipo() << "\n";
+    }
+}
 
 void FornecedorRepositorio::validarEntidade(const Fornecedor& forn) const {
     if (forn.getNome().empty() || forn.getTelefone().empty() || forn.getTipo().empty()) 

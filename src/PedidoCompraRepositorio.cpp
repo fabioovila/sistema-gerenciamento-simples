@@ -1,6 +1,66 @@
 #include "PedidoCompraRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+PedidoCompraRepositorio::PedidoCompraRepositorio() : RepositorioMemoriaBase<pedidoCompra>("Pedido de Compra") {
+    carregarDados();
+}
+
+PedidoCompraRepositorio::~PedidoCompraRepositorio() {
+    salvarDados();
+}
+
+void PedidoCompraRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        stringstream ss(linha);
+        string idFornecedorStr, valorStr, estado, itensStr;
+
+        if (!getline(ss, idFornecedorStr, ';')) continue;
+        if (!getline(ss, valorStr, ';')) continue;
+        if (!getline(ss, estado, ';')) continue;
+        if (!getline(ss, itensStr, ';')) continue;
+
+        int idFornecedor = stoi(idFornecedorStr);
+        float valor = stof(valorStr);
+
+        vector<pair<int, int>> itens;
+        stringstream itensStream(itensStr);
+        string itemToken;
+        while (getline(itensStream, itemToken, '|')) {
+            if (itemToken.empty()) continue;
+            size_t sep = itemToken.find(',');
+            if (sep == string::npos) continue;
+            int idPeca = stoi(itemToken.substr(0, sep));
+            int quantidade = stoi(itemToken.substr(sep + 1));
+            itens.emplace_back(idPeca, quantidade);
+        }
+
+        pedidoCompra* pedido = new pedidoCompra(idFornecedor, valor, estado, itens);
+        lista.push_back(pedido);
+    }
+}
+
+void PedidoCompraRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const pedidoCompra* pedido : lista) {
+        saida << pedido->getIdFornecedor() << ";" << pedido->getValor() << ";" << pedido->getEstado() << ";";
+        const auto& itens = pedido->getItens();
+        for (size_t i = 0; i < itens.size(); ++i) {
+            saida << itens[i].first << "," << itens[i].second;
+            if (i + 1 < itens.size()) saida << "|";
+        }
+        saida << "\n";
+    }
+}
 
 void PedidoCompraRepositorio::validarEntidade(const pedidoCompra& ped) const {
     if (ped.getValor() <= 0) 

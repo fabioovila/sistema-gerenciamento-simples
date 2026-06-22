@@ -7,6 +7,13 @@ protected:
     void validarEntidade(const Peca& entidade) const override;
     Peca* coletarDadosCriacao() override;
     void coletarDadosAtualizacao(Peca* entidade) override;
+
+private:
+    string nomeArquivo = "pecas.txt";
+    void carregarDados();
+    void salvarDados() const;
+
 public:
-    PecaRepositorio() : RepositorioMemoriaBase<Peca>("Peca") {}
+    PecaRepositorio();
+    ~PecaRepositorio();
 };

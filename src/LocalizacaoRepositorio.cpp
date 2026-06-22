@@ -1,6 +1,42 @@
 #include "LocalizacaoRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+LocalizacaoRepositorio::LocalizacaoRepositorio() : RepositorioMemoriaBase<Localizacao>("Localizacao") {
+    carregarDados();
+}
+
+LocalizacaoRepositorio::~LocalizacaoRepositorio() {
+    salvarDados();
+}
+
+void LocalizacaoRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        stringstream ss(linha);
+        string prateleira;
+
+        if (!getline(ss, prateleira, ';')) continue;
+
+        Localizacao* loc = new Localizacao(prateleira);
+        lista.push_back(loc);
+    }
+}
+
+void LocalizacaoRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const Localizacao* loc : lista) {
+        saida << loc->getPrateleira() << "\n";
+    }
+}
 
 void LocalizacaoRepositorio::validarEntidade(const Localizacao& loc) const {
     if (loc.getPrateleira().empty()) 

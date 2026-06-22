@@ -1,6 +1,49 @@
 #include "VendaRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+VendaRepositorio::VendaRepositorio() : RepositorioMemoriaBase<Venda>("Venda") {
+    carregarDados();
+}
+
+VendaRepositorio::~VendaRepositorio() {
+    salvarDados();
+}
+
+void VendaRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+
+        stringstream ss(linha);
+        string subTotalStr, idFuncionarioStr, idClienteStr, dataCompra;
+
+        if (!getline(ss, subTotalStr, ';')) continue;
+        if (!getline(ss, idFuncionarioStr, ';')) continue;
+        if (!getline(ss, idClienteStr, ';')) continue;
+        if (!getline(ss, dataCompra, ';')) continue;
+
+        float subTotal = stof(subTotalStr);
+        int idFuncionario = stoi(idFuncionarioStr);
+        int idCliente = stoi(idClienteStr);
+
+        Venda* venda = new Venda(subTotal, idFuncionario, idCliente, dataCompra);
+        lista.push_back(venda);
+    }
+}
+
+void VendaRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const Venda* venda : lista) {
+        saida << venda->getSubTotal() << ";" << venda->getIdFuncionario() << ";" << venda->getIdCliente() << ";" << venda->getDataCompra() << "\n";
+    }
+}
 
 void VendaRepositorio::validarEntidade(const Venda& v) const {
     if (v.getSubTotal() <= 0) 
