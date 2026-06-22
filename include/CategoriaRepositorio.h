@@ -7,6 +7,13 @@ protected:
     void validarEntidade(const Categoria& entidade) const override;
     Categoria* coletarDadosCriacao() override;
     void coletarDadosAtualizacao(Categoria* entidade) override;
+
+private:
+    string nomeArquivo = "categorias.txt";
+    void carregarDados();
+    void salvarDados() const;
+
 public:
-    CategoriaRepositorio() : RepositorioMemoriaBase<Categoria>("Categoria") {}
+    CategoriaRepositorio();
+    ~CategoriaRepositorio();
 };

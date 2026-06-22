@@ -1,6 +1,42 @@
 #include "CategoriaRepositorio.h"
 #include "Funcs.h"
 #include <sstream>
+#include <fstream>
+
+CategoriaRepositorio::CategoriaRepositorio() : RepositorioMemoriaBase<Categoria>("Categoria") {
+    carregarDados();
+}
+
+CategoriaRepositorio::~CategoriaRepositorio() {
+    salvarDados();
+}
+
+void CategoriaRepositorio::carregarDados() {
+    ifstream entrada(nomeArquivo);
+    if (!entrada.is_open()) return;
+
+    string linha;
+    while (getline(entrada, linha)) {
+        if (linha.empty()) continue;
+        stringstream ss(linha);
+        string nome, localizacao;
+
+        if (!getline(ss, nome, ';')) continue;
+        if (!getline(ss, localizacao, ';')) continue;
+
+        Categoria* categoria = new Categoria(nome, localizacao);
+        lista.push_back(categoria);
+    }
+}
+
+void CategoriaRepositorio::salvarDados() const {
+    ofstream saida(nomeArquivo);
+    if (!saida.is_open()) return;
+
+    for (const Categoria* categoria : lista) {
+        saida << categoria->getNome() << ";" << categoria->getLocalizacao() << "\n";
+    }
+}
 
 void CategoriaRepositorio::validarEntidade(const Categoria& cat) const {
     if (cat.getNome().empty()) throw CampoVazioException("Nome da Categoria");
